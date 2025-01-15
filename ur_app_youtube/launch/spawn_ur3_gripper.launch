@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+
+<launch>
+
+    <!-- Associate to the robot description parameter, the urdf file that model the robot-->
+    <param name="robot_description" command = "$(find xacro)/xacro --inorder $(find ur_app_youtube)/urdf/ur3_yt_gripper.xacro" />
+
+    <!-- Set teh position in empty world-->
+    <arg name="x" default="0" />
+    <arg name="y" default="0" />
+    <arg name="z" default="0.5" />
+
+    <!-- put world file as argument-->
+    <!--<arg name="world_file" default = "$(find cobot_sim)/worlds/pick_place_scene.world" />-->
+
+    <!-- Launch Gezabo world in paused-->
+    <include file = "$(find gazebo_ros)/launch/empty_world.launch" >
+        <arg name="use_sim_time" value="true"/>
+        <arg name="debug" value="false"/>
+        <arg name="gui" value="true"/>
+        <arg name="paused" value="true" />
+        <!--<arg name="world_name" value="$(arg world_file)"/>-->
+    </include>   
+
+    <!-- Spawn the robot using the package gazebo_ros-->
+    <node name="spawn_the_robot" pkg="gazebo_ros" type="spawn_model"  output="screen" args="-urdf -param robot_description -model ur3 -x $(arg x) -y $(arg y) -z $(arg z)" />
+    
+
+    <!-- Load controllers from YAML configuration file -->
+	<rosparam command="load" file="$(find ur_app_youtube)/config/controller.yaml" allow_none="true" />
+
+
+     <!-- Load the node controller manager-->
+    <node name="controller_spawner" pkg="controller_manager" type="spawner"  
+            output="screen" respawn="false" ns="/ur3"
+            args="joint_state_controller
+                eff_joint_traj_controller
+                gripper_controller">        
+    </node>
+</launch>

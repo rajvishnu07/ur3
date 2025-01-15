@@ -1,0 +1,14 @@
+ur3:
+  joint_state_controller:
+    type: "joint_state_controller/JointStateController"
+    publish_rate: 50
+    
+  eff_joint_traj_controller:
+    type: "effort_controllers/JointTrajectoryController"
+    joints: [shoulder_pan_joint, shoulder_lift_joint, elbow_joint, wrist_1_joint, wrist_2_joint, wrist_3_joint]
+
+  gripper_controller:
+    type: "position_controllers/JointTrajectoryController"
+    joints: [robotiq_85_left_knuckle_joint]
+
+  
